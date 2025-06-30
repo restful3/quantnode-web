@@ -40,7 +40,7 @@ function parseN8nToReactFlow(json: any): { nodes: Node[]; edges: Edge[] } {
   return { nodes, edges };
 }
 
-export default function WorkflowDetail({ params }: { params: { id: string } }) {
+export default function WorkflowDetail({ params }: any) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const router = useRouter();
