@@ -1,0 +1,33 @@
+.n8n-node {
+    background: #1e1e2f;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    border: 2px solid #3e3e5a;
+    min-width: 160px;
+    font-size: 14px;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .n8n-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  
+  .n8n-label {
+    font-weight: 500;
+    text-align: center;
+    word-break: break-word;
+  }
+  
+  .n8n-handle {
+    background: #61dafb;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  

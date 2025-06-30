@@ -1,7 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import ReactFlow, { Background, Controls, Node, Edge } from 'reactflow';
+import CustomNode from '../../components/CustomNode';
+import { useEffect, useState, useCallback } from 'react';
+import ReactFlow, { 
+  Background, 
+  Controls, 
+  Node, 
+  Edge,
+  NodeChange,
+  EdgeChange,
+  applyNodeChanges,
+  applyEdgeChanges
+} from 'reactflow';
 import 'reactflow/dist/style.css';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
@@ -45,6 +55,16 @@ export default function WorkflowDetail({ params }: any) {
   const [edges, setEdges] = useState<Edge[]>([]);
   const router = useRouter();
 
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
+
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
@@ -76,7 +96,14 @@ export default function WorkflowDetail({ params }: any) {
 
   return (
     <main style={{ height: '100vh', background: '#111' }}>
-      <ReactFlow nodes={nodes} edges={edges} fitView>
+      <ReactFlow 
+        nodes={nodes} 
+        edges={edges} 
+        fitView 
+        nodeTypes={{ default: CustomNode }}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+      >
         <Background />
         <Controls />
       </ReactFlow>
