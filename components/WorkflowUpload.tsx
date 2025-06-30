@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 export default function WorkflowUpload() {
   const [title, setTitle] = useState('')
@@ -8,6 +9,7 @@ export default function WorkflowUpload() {
   const [tags, setTags] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [message, setMessage] = useState('')
+  const [insertedId, setInsertedId] = useState<number | null>(null)
 
   const handleUpload = async () => {
     if (!file || !title) return alert('파일과 제목은 필수입니다.')
@@ -29,19 +31,23 @@ export default function WorkflowUpload() {
     const jsonUrl = `${supabase.storage.from('workflows-json').getPublicUrl(filePath).data.publicUrl}`
 
     // 2. 메타데이터 DB에 저장
-    const { error: insertError } = await supabase.from('workflows').insert({
-      title,
-      description,
-      tags: tags.split(',').map(tag => tag.trim()),
-      json_url: jsonUrl,
-      uploader_email: null, // 추후 로그인 기능 붙이면 대체
-    })
+    const { data: insertData, error: insertError } = await supabase.from('workflows')
+      .insert({
+        title,
+        description,
+        tags: tags.split(',').map(tag => tag.trim()),
+        json_url: jsonUrl,
+        uploader_email: null, // 추후 로그인 기능 붙이면 대체
+      })
+      .select('id')
+      .single()
 
     if (insertError) {
       console.error(insertError)
       return setMessage('DB 저장 실패')
     }
 
+    setInsertedId(insertData.id)
     setMessage('🎉 업로드 성공!')
     setTitle('')
     setDescription('')
@@ -58,6 +64,11 @@ export default function WorkflowUpload() {
       <input type="file" accept=".json" className="w-full mb-2" onChange={e => setFile(e.target.files?.[0] || null)} />
       <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleUpload}>업로드</button>
       {message && <p className="mt-4">{message}</p>}
+      {insertedId && (
+        <Link href={`/workflows/${insertedId}`} className="text-blue-500 underline">
+          시각화 보기
+        </Link>
+      )}
     </div>
   )
 }
